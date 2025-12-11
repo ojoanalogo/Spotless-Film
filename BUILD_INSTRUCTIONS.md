@@ -2,21 +2,43 @@
 
 This guide shows you how to create a standalone executable that your friends can run without installing Python.
 
+## Prerequisites
+
+### Install uv (Recommended)
+
+**macOS/Linux:**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows (PowerShell):**
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Or download from: https://github.com/astral-sh/uv/releases
+
 ## Quick Build (Recommended)
 
-1. **Navigate to the src directory:**
+1. **Navigate to the project root:**
    ```bash
-   cd /Users/yahyarahhawi/Developer/Dust-Removal-UNet/src
+   cd /path/to/Spotless-Film
    ```
 
-2. **Run the automated build script:**
+2. **Install dependencies:**
    ```bash
-   python build_executable.py
+   uv sync
+   ```
+
+3. **Run the build script:**
+   ```bash
+   cd src
+   uv run python build_executable.py
    ```
 
 The script will:
-- ✅ Check and install PyInstaller
-- ✅ Verify all dependencies are installed
+- ✅ Sync all dependencies with uv
+- ✅ Install PyInstaller if needed
 - ✅ Clean previous builds
 - ✅ Create the executable
 - ✅ Package everything in a `distribution/` folder
@@ -25,15 +47,27 @@ The script will:
 
 If you prefer manual control:
 
-1. **Install PyInstaller:**
+1. **Install dependencies:**
    ```bash
-   pip install pyinstaller
+   uv sync
+   uv pip install pyinstaller
    ```
 
 2. **Build the executable:**
    ```bash
-   pyinstaller --clean spotless_film.spec
+   cd src
+   uv run pyinstaller --clean spotless_film.spec
    ```
+
+## Without uv (pip fallback)
+
+If you don't have uv, the build script will fall back to pip:
+
+```bash
+cd src
+pip install pyinstaller torch torchvision pillow customtkinter opencv-python numpy tkinterdnd2 tqdm
+python build_executable.py
+```
 
 ## Output Files
 
@@ -69,7 +103,7 @@ After building, you'll find:
 ## File Size Expectations
 
 - **macOS**: ~500MB - 1GB (includes all dependencies)
-- **Windows**: ~300MB - 800MB 
+- **Windows**: ~300MB - 800MB
 - **Linux**: ~400MB - 900MB
 
 The large size is normal - it includes Python, PyTorch, and all dependencies.
@@ -77,9 +111,9 @@ The large size is normal - it includes Python, PyTorch, and all dependencies.
 ## Troubleshooting
 
 ### Build Fails
-- Make sure you're in the `src/` directory
-- Install missing dependencies: `pip install -r requirements_spotless_film.txt`
-- Try cleaning: `rm -rf build dist __pycache__`
+- Make sure you're in the `src/` directory when running the build script
+- Try reinstalling dependencies: `uv sync --reinstall`
+- Clean and retry: `rm -rf build dist __pycache__`
 
 ### Executable Won't Start
 - Run from terminal to see error messages
@@ -118,4 +152,11 @@ Edit `spotless_film.spec` to customize:
 - Adjust console visibility for debugging
 - Change app bundle settings
 
-Happy building! 🚀
+## Development
+
+Run the app directly without building:
+
+```bash
+cd /path/to/Spotless-Film
+uv run python src/spotless_film_modern.py
+```
